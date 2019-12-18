@@ -1,0 +1,246 @@
+<ng4-loading-spinner></ng4-loading-spinner>
+
+<nav class="navbar navbar-toggleable-md navbar-inverse fixed-top market-bg-custom">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+    <a class="navbar-brand" href="#/" ui-sref="/">
+        <!-- <img src="/assets/img/smartDex_logo.png" class="" /> -->
+    </a>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+            </li>
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link nav_item" routerLink="/home" routerLinkActive="active">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav_item" routerLink="/market/WETH/ZRX" routerLinkActive="active">Exchange</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav_item" routerLink="/faq" routerLinkActive="active">FAQ</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav_item" routerLink="/about" routerLinkActive="active">About Us</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div id="account_container">
+    <div class="row">
+        <div class="main-col col-12 col-md-12 col-lg-12 col-xl-12">
+          <div class="row">
+              <div class="wallet_overview col-6 col-md-9 col-xl-9">
+                  <h1>Wallet Overview</h1>
+                  <div id="addr_account">{{userAddress}}</div>
+              </div>
+              <div class="text-right col-6 col-md-3 col-xl-3">
+                  <div id="user_addr_qr_code">
+                      <qr-code [value]="userAddress" [size]="110"></qr-code>
+                  </div>
+              </div>
+          </div>
+            <div class="component_exchange col-12 col-xl-12">
+                <div class="form-group" class="oder_ticker_title">
+                    <label for="formGroupExampleInput">Convert Ether</label>
+                    <span><img src="/assets/img/token_icons/ether.png" class="wrap_logo" alt="Token"></span> -
+                    <span><img src="/assets/img/token_icons/ether_erc20.png" class="wrap_logo" alt="Token"></span>
+                </div>
+                <div class="row">
+                    <div class="main-col col-12 col-md-6 col-xl-6">
+                        <div class="row wrap_control">
+                            <!-- <div class="col-4 col-md-4 col-xl-4">
+                                <div class="form-group">
+                                  <img src="/assets/img/token_icons/ether.png" class="wrap_logo" alt="Token">
+                                </div>
+                            </div> -->
+                            <div class="col-12 col-md-12 col-lg-12 col-xl-12" id="wrap_eth">
+                                <div class="convert_control">
+                                    <div class="current_balance">Balance: <span class="token_balance"><span *ngIf="isEmptyEthBalance"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span>{{userEthBalance | number:'1.3-5'}}</span> ETH</div>
+                                    <mat-form-field class="form-group col-12 col-md-12">
+                                        <input type="number" matInput placeholder="Amount to Convert" [formControl]="eth_amount" value="" required>
+                                        <mat-error *ngIf="eth_amount.invalid">{{getErrorMessage('eth_amount')}}</mat-error>
+                                        <mat-hint align="end">Available: <span class="token_balance"><span *ngIf="isEmptyEthBalance"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span>{{userEthBalance | number:'1.3-5'}}</span> ETH</mat-hint>
+                                    </mat-form-field>
+                                    <div class="convert_action_btn">
+                                      <div class="form-group">
+                                          <button mat-button (click)="convert('eth')" color="accent">CONVERT <span *ngIf="isWrappingEth"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span></button>
+                                      </div>
+                                    </div>
+                                    <div class="err_status">
+                                        <p *ngIf="isErrEth">{{errMsg}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="main-col col-12 col-md-6 col-xl-6">
+                        <div class="row wrap_control">
+                            <div class="col-12 col-md-12 col-lg-12 col-xl-12" id="unwrap_eth">
+                                <div class="convert_control">
+                                    <div class="current_balance">Balance: <span><span *ngIf="isEmptywethBalance"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span>{{userWethBalance | number:'1.3-5'}}</span> WETH</div>
+                                    <mat-form-field class="form-group col-12 col-md-12">
+                                        <input type="number" matInput placeholder="Amount to Convert" [formControl]="weth_amount" value="" required>
+                                        <mat-error *ngIf="weth_amount.invalid">{{getErrorMessage('weth_amount')}}</mat-error>
+                                        <mat-hint align="end">Available: <span class="token_balance"><span *ngIf="isEmptywethBalance"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span>{{userWethBalance | number:'1.3-5'}}</span> WETH</mat-hint>
+                                    </mat-form-field>
+                                    <div class="convert_action_btn">
+                                      <div class="form-group">
+                                          <button mat-button (click)="convert('weth')" color="accent">CONVERT <span *ngIf="isUnWrappingEth"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span></button>
+                                      </div>
+                                    </div>
+                                    <div class="err_status">
+                                        <p *ngIf="isErrWeth">{{errMsg}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <mat-tab-group>
+        <mat-tab label="My Account Balances">
+            <div class="main-col col-12 col-xl-12">
+                <div class="component_exchange">
+                    <div class="form-group" class="oder_ticker_title">
+                        <label for="formGroupExampleInput">My available Balances</label>
+                        <span class="text-right" style="float: right;" *ngIf="isProcessing"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span>
+                    </div>
+                    <div class="table-responsive scrollbar" id="style-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width:15% !important;">ICON</th>
+                                    <th style="width:15% !important;"><span class="list_token_symbol">Symbol</span></th>
+                                    <th style="width:20% !important;"><span class="list_token_name">Token Name</span></th>
+                                    <th class="text-center" style="width:15% !important;">Allowance</th>
+                                    <th class="text-right" style="width:15% !important;">Balances</th>
+                                    <th class="text-center" style="width:20% !important;">Send</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-center">
+                                        <img src="/assets/img/token_icons/ether_erc20.png" class="logo_img_sub" alt="Token">
+                                    </td>
+                                    <td><span class="list_token_symbol">{{BaseToken}}</span></td>
+                                    <td><span class="list_token_name">Wrap Ether</span></td>
+                                    <td class="text-center">
+                                        <ng-template *ngIf="BaseTokenInfo; then baseTokenallowance else baseTokenAllowanceloading"></ng-template>
+                                        <ng-template #baseTokenallowance>
+                                            <label class="switch">
+                                                <input type="checkbox" name="{{BaseToken}}_balance" id="{{BaseToken}}" (change)="onAllowanceChange($event)" [ngModel]="BaseTokenInfo.TokenAllowance" >
+                                                <span class="slider round"></span>
+                                            </label>
+                                        </ng-template>
+                                        <ng-template #baseTokenAllowanceloading>
+                                            <span>
+                                                <label class="switch">
+                                                    <input type="checkbox" [ngModel]="0" >
+                                                    <span class="slider round"></span>
+                                            </label>
+                                            </span>
+                                        </ng-template>
+                                    </td>
+                                    <td class="text-right">
+                                        <ng-template *ngIf="BaseTokenInfo; then basetokenbalance else basetokenbalanceloading"></ng-template>
+                                        <ng-template #basetokenbalance><span class="token_balance">{{BaseTokenInfo.TokenBalance}}</span> <span class="token_unit">({{BaseToken}})</span></ng-template>
+                                        <ng-template #basetokenbalanceloading><span><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span></ng-template>
+
+                                    </td>
+                                    <td class="text-center"><button mat-button (click)="openDialog(BaseToken)" color="accent">Send </button></td>
+
+                                </tr>
+                                <tr *ngFor="let token of Tokenlists; let i = index" [attr.data-index]="i">
+                                    <td class="text-center">
+                                      <span *ngIf="!token.is_new"><img src="/assets/img/token_icons/{{token.symbol}}.png" class="logo_img_sub" alt="Token"></span>
+                                      <span *ngIf="token.is_new"><img src="/assets/img/token_icons/default.png" class="logo_img_sub" alt="Token"></span>
+                                    </td>
+                                    <td><span class="list_token_symbol">{{token.symbol}}</span> <sup *ngIf="token.is_new"><span class="new_token">new</span></sup></td>
+                                    <td><span class="list_token_name">{{token.name}}</span></td>
+                                    <td class="text-center">
+                                        <ng-template *ngIf="tokens_by_symbol; then allowance else allowanceloading"></ng-template>
+                                        <ng-template #allowance>
+                                            <label class="switch">
+                                                <input type="checkbox" name="{{token.symbol}}_balance" id="{{token.symbol}}" (change)="onAllowanceChange($event)" [ngModel]="tokens_by_symbol[i].TokenAllowance" >
+                                                <span class="slider round"></span>
+                                            </label>
+                                        </ng-template>
+                                        <ng-template #allowanceloading>
+                                            <span>
+                                                <label class="switch">
+                                                    <input type="checkbox" [ngModel]="0" >
+                                                    <span class="slider round"></span>
+                                            </label>
+                                            </span>
+                                        </ng-template>
+                                    </td>
+                                    <td class="text-right">
+                                        <ng-template *ngIf="tokens_by_symbol; then balance else balanceloading"></ng-template>
+                                        <ng-template #balance><span class="token_balance">{{tokens_by_symbol[i].TokenBalance}}</span> <span class="token_unit">({{token.symbol}})</span></ng-template>
+                                        <ng-template #balanceloading><span><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span></ng-template>
+                                    </td>
+                                    <td class="text-center"><button mat-button (click)="openDialog(token.symbol)" color="accent">Send </button></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <!-- end of row -->
+                    </div>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="My Trading History">
+            <div class="main-col col-12 col-xl-12">
+                <div class="component_exchange">
+                    <div class="form-group" class="oder_ticker_title">
+                        <label for="formGroupExampleInput">Trading History</label>
+                    </div>
+                    <div class="table-responsive scrollbar" id="style-3">
+                        <table class="table" class="my_orderhistory_tbl">
+                            <thead>
+                                <tr>
+                                    <th class="text-left" style="width:10% !important;">txHash</th>
+                                    <th class="text-left" style="width:15% !important;">created</th>
+                                    <th class="text-left" style="width:15% !important;">makerToken</th>
+                                    <th class="text-left" style="width:10% !important;">Amount</th>
+                                    <th class="text-left" style="width:15% !important;">takerToken</th>
+                                    <th class="text-left" style="width:10% !important;">Price</th>
+                                    <th class="text-left" style="width:15% !important;">CloseAt</th>
+                                    <th class="text-left" style="width:10% !important;">status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="order_items" *ngFor="let order of myHistoryOrders">
+                                    <td class="order_bid">{{order.orderHash | slice:0:10}}...</td>
+                                    <td class="order_bid">{{order.created_on * 1000 | date}}</td>
+                                    <td class="order_bid">{{order.makerTokenAddress | slice:0:10}}...</td>
+                                    <td class="order_bid">{{order.takerTokenAmount | toAmount}}</td>
+                                    <td class="order_bid">{{order.takerTokenAddress | slice:0:10}}...</td>
+                                    <td class="order_bid">{{order.makerTokenAmount/order.takerTokenAmount | number: '1.5'}}</td>
+                                    <td class="order_bid">{{order.closeAt * 1000 | date}}</td>
+                                    <td class="order_bid">
+                                        <ng-template *ngIf="statetype(order.state); then orderfilled else orderfailed"></ng-template>
+                                        <ng-template #orderfilled>
+                                            <div class="badge block badge-success bordered"><a href="https://etherscan.io/tx/{{order.orderHash}}" target="_black" style="color:white;">{{order.state}}</a></div>
+                                        </ng-template>
+                                        <ng-template #orderfailed>
+                                            <div class="badge block badge-danger bordered"><a href="https://etherscan.io/tx/{{order.orderHash}}" target="_black" style="color:white;">{{order.state}}</a></div>
+                                        </ng-template>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>

@@ -1,0 +1,195 @@
+@font-face {
+    font-family: "h1-box-font";
+    src: url("/assets/font/DINPro-Black.otf");
+}
+
+.bg-custom {
+    background-color: rgba(156, 147, 191, 0.1);
+    /* border-bottom: 1px solid #255398; */
+    margin-bottom: 15px;
+}
+
+.nav_item {
+    font-size: 18px;
+    font-weight: 500;
+    color: #ffffffd4 !important;
+    padding: 5px 20px 5px 20px !important;
+}
+
+.btn-xl {
+    text-transform: uppercase;
+    padding: 1.5rem 3rem;
+    font-size: .9rem;
+    font-weight: 700;
+    letter-spacing: .1rem
+}
+
+.bg-black {}
+
+.landing_block {
+    padding: 50px 20px 20px 50px;
+    min-height: 500px;
+    /* border-bottom: 1px solid seagreen; */
+}
+.desc_body{
+  color: rgb(240, 240, 240) !important;
+
+}
+.desc_body h4{
+  font-family: 'h1-box-font';
+  font-size: 40px;
+  font-weight: 400;
+
+}
+.desc_body p{
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: 400;
+
+}
+#exchange_ad {
+  background-color: #000a22 !important;
+
+}
+#converter_ad {
+  background-color: #050e25 !important;
+
+}
+#coinblender_ad {
+  background-color: #dde0e4 !important;
+}
+#wallet_ad {
+  background-color: #020e2d !important;;
+}
+#aboutus_ad {
+  background-color: #000a22 !important;
+}
+.landing_block_img {
+    width: 100%;
+}
+.landing_portfolio {
+  border-bottom: 1px solid black;
+  box-shadow: 2px 5px #031131;
+  padding: 15px 10px 10px 15px;
+  text-align: center;
+}
+.description {
+  margin: 15px 5px 5px 10px;
+}
+.description h3 {
+  color: rgb(241, 249, 255);
+}
+.description p {
+  color: rgb(248, 236, 236);
+}
+.landing_portfolio img{
+  width: 60%;
+  text-align: center;
+}
+.rounded-pill {
+    border-radius: 5rem
+}
+
+header.masthead {
+    font-family: 'h1-box-font';
+    text-shadow: 2px 2px 1px #000;
+    letter-spacing: -2px;
+    font-weight: 800;
+    position: relative;
+    min-height: 650px;
+    overflow: hidden;
+    text-align: center !important;
+    padding-top: calc(7rem + 72px);
+    padding-bottom: 7rem;
+    background: url("/assets/img/blockchain.png") no-repeat bottom;
+    background-size: 100% auto;
+    background-position: center center;
+    background-attachment: scroll;
+    background-size: cover
+}
+header.masthead h3 {
+  font-size: 40px !important;
+  letter-spacing: 2px;
+  font-weight: 400 !important;
+}
+header.masthead a {
+  font-size: 30px !important;
+  letter-spacing: 2px;
+  font-weight: 400 !important;
+}
+header.masthead .masthead-content {
+    z-index: 1;
+    position: relative
+}
+header.masthead .masthead-content .masthead-heading {
+    font-size: 5rem
+}
+
+header.masthead .masthead-content .masthead-subheading {
+    font-size: 5rem
+}
+
+@media (min-width:992px) {
+    header.masthead {
+        padding-top: calc(10rem + 55px);
+        padding-bottom: 10rem
+    }
+    header.masthead .masthead-content .masthead-heading {
+        font-size: 5rem
+    }
+    header.masthead .masthead-content .masthead-subheading {
+        font-size: 5rem
+    }
+}
+
+@media (max-width:576px) {
+    header.masthead {
+        padding-top: calc(10rem + 55px);
+        padding-bottom: 6rem
+    }
+    header.masthead .masthead-content .masthead-heading {
+        font-size: 4rem
+    }
+    header.masthead .masthead-content .masthead-subheading {
+        font-size: 4rem
+    }
+}
+
+@media (max-width:768px) {
+    header.masthead {
+        padding-top: calc(10rem + 55px);
+        padding-bottom: 7rem
+    }
+    header.masthead .masthead-content .masthead-heading {
+        font-size: 4rem
+    }
+    header.masthead .masthead-content .masthead-subheading {
+        font-size: 4rem
+    }
+}
+
+@media (max-width:320px) {
+    header.masthead {
+        padding-top: calc(10rem + 55px);
+        padding-bottom: 5rem
+    }
+    header.masthead .masthead-content .masthead-heading {
+        font-size: 3rem
+    }
+    header.masthead .masthead-content .masthead-subheading {
+        font-size: 3rem
+    }
+}
+
+@media (max-width:200px) {
+    header.masthead {
+        padding-top: calc(10rem + 55px);
+        padding-bottom: 4rem
+    }
+    header.masthead .masthead-content .masthead-heading {
+        font-size: 2rem
+    }
+    header.masthead .masthead-content .masthead-subheading {
+        font-size: 2rem
+    }
+}

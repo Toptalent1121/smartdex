@@ -1,0 +1,650 @@
+<ng4-loading-spinner></ng4-loading-spinner>
+
+<!-- <div class="container_sidenav exchange-bg" style="margin-top: -83px; background:#000000cf"> -->
+<div class="container_sidenav exchange-bg" style="margin-top: -83px;">
+    <div class="row" id="exchange_container">
+      <div class="col-12 col-md-4 col-lg-4 col-xl-4" style="display: flex;flex-flow: column;"> 
+        <div class="row">
+            <div class="col-md-12 col-12 col-lg-12 col-xl-12">
+                <div class="component_exchange" id="my_balance">
+                    <div class="view_mode text-center" *ngIf="!coinbase || netWorkID !==42">
+                        <div>
+                            <p>You are in view mode.<br> Please Unlock your account to see your balances</p>
+                        </div>
+                    </div>
+                    <div class="form-group" class="order_ticker_title">
+                        <label for="formGroupExampleInput">MY BALANCE</label>
+                        <span style="float:right;">
+                            <button class="btn btn-outline-danger1 btn-sm" [disabled]="!etherBalance" (click)="convertTo('ETH')">wrap</button>
+                            <button class="btn btn-outline-info1 btn-sm" [disabled]="!BaseTokenStatus.TokenBalance" (click)="convertTo('WETH')">unwrap</button>
+                        </span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th width="30%">Asset</th>
+                                    <th width="30%" class="text-right">Balances</th>
+                                    <th width="40%" class="text-right">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>ETH</td>
+                                    <td class="text-right" colspan="2">
+                                      <span>{{etherBalance | number:'1.3-5'}} ETH
+                                      </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>WETH</td>
+                                    <td class="text-right">
+                                      <span>{{BaseTokenStatus.TokenBalance}}
+                                      </span>
+                                      <span *ngIf="isProcessingAllowanceBaseToken"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span>
+                                    </td>
+                                    <td class="text-right">
+                                      <label class="switch">
+                                      <input type="checkbox" name="base_balance" id="WETH" [disabled]="!coinbase" (change)="onAllowanceChange($event)" [ngModel]="BaseTokenStatus.TokenAllowance" >
+                                      <span class="slider round"></span>
+                                  </label>
+                                        </td>
+                                </tr>
+                                <tr>
+                                    <td class="selected_token">{{quoteToken}}</td>
+                                    <td class="text-right">
+                                        <span>{{quoteTokenStatus.TokenBalance}}
+                                        </span>
+                                        <span *ngIf="isProcessingAllowanceQuoteToken"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span>
+
+                                    </td>
+                                    <td class="text-right">
+                                        <label class="switch">
+                                      <input type="checkbox" name="quote_balance" id="{{quoteToken}}" [disabled]="!coinbase" (change)="onAllowanceChangeEvot($event)" [ngModel]="quoteTokenStatus.TokenAllowance">
+                                      <span class="slider round"></span>
+                                  </label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- end of row -->
+                </div>
+            </div>
+        </div>
+        <div class="row" style="flex-grow: 1;">
+            <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+                <div class="component_exchange" style="height: calc(100% - 9px);">
+                    <div class="form-group" class="order_ticker_title">
+                        <label for="formGroupExampleInput">TRADE HISTORY<span *ngIf="isGettingTradehistory"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span></label>
+                    </div>
+                    <div class="table-responsive scrollbar_trade" id="style-3"  style="overflow: auto !important;max-height: 1370px !important;">
+                        <table class="table" class="my_orderhistory_tbl">
+                            <thead>
+                                <tr>
+                                    <th style="width:40% !important;" class="text-left">DATE</th>
+                                    <th style="width:20% !important;" class="text-left">TYPE</th>
+                                    <th style="width:20% !important;" class="text-left">ETH</th>
+                                    <!-- <th style="width:20% !important;" class="text-left">AMOUNT({{quoteToken}})</th> -->
+                                    <th style="width:20% !important;" class="text-left">EVOT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- <tr class="order_items" *ngFor="let order of MarketHistory" (click)="confirm(order.orderHash)"> -->
+                                <tr class="order_items" *ngFor="let order of MarketHistory">
+                                    <ng-template *ngIf="ordertype(order.type); then markethisbids else markethisasks"></ng-template>
+                                    <ng-template #markethisbids>
+                                        <td class="text-left" style="width: 40%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;padding-right: 0px !important;">{{order.closeAt * 1000 | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                                        <td class="order_bid text-left" style="width: 30%; color:#50a58d !important; padding-right: 0px !important">BUY</td>
+                                        <td class="text-left" style="width: 30%;padding-right: 0px !important">{{order.remainedMakerTokenAmount/order.remainedTakerTokenAmount | number: '1.4'}}</td>
+                                        <td class="text-left" style="width: 30%;">{{ (order.remainedTakerTokenAmount | toAmount) | number: '1.1'}}</td>
+                                    </ng-template>
+                                    <ng-template #markethisasks>
+                                        <td class="text-left" style="width: 40%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;padding-right: 0px !important;">{{order.closeAt * 1000 | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                                        <td class="order_ask text-left" style="width: 30%; color:rgb(255, 67, 90) !important;padding-right: 0px !important">SELL</td>
+                                        <td class="text-left" style="width: 30%;padding-right: 0px !important">{{order.remainedTakerTokenAmount/order.remainedMakerTokenAmount | number: '1.4'}}</td>
+                                        <td class="text-left" style="width: 30%;">{{(order.remainedMakerTokenAmount | toAmount) | number: '1.1'}}</td>
+                                    </ng-template>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-8 col-lg-8 col-xl-8">
+        <div class="row">
+            <div class="col-12 col-lg-12 col-xl-12">
+                <div class="component_exchange" id="market_overview">
+                    <div class="row table-responsive">
+                        <table class="table table-striped table-hover table-sm" style="margin-bottom:0px;">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Last</th>
+                                    <th class="text-center">24h Vol</th>
+                                    <th class="text-center" style="color:#3f7e6d">Bid</th>
+                                    <th class="text-center" style="color:#cf364b">Ask</th>
+                                    <th class="text-center" style="color:#3f7e6d">24h High</th>
+                                    <th class="text-center" style="color:#cf364b">24h Low</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-center ticker" style="padding-left: 20px;">
+                                        <span class="" *ngIf="ticker_lastPrice; else loading">{{ticker_lastPrice | number: '1.3-5'}}ETH
+                                            <br><span class="ticker_usd">${{ethUsdPrice * (ticker_lastPrice | number: '1.3-5') | number: '1.3-5'}}</span>
+                                        </span>
+                                        <ng-template #loading>
+                                            <span><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span>
+                                        </ng-template>
+                                    </td>
+                                    <td class="text-center ticker">
+                                        <span class="" *ngIf="ticker_market24hVolume; else loading">{{ticker_market24hVolume | number: '1.3-5'}}ETH
+                                            <br><span class="ticker_usd">${{ethUsdPrice * (ticker_market24hVolume | number: '1.3-5') | number: '1.3-5'}}</span>
+                                        </span>
+                                        <ng-template #loading>
+                                            <span><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span>
+                                        </ng-template>
+                                    </td>
+                                    <td class="text-center ticker">
+                                        <span class="" *ngIf="ticker_lastBid; else loading">{{ticker_lastBid | number: '1.3-5'}}ETH
+                                            <br><span class="ticker_usd">${{ethUsdPrice * (ticker_lastBid | number: '1.3-5') | number: '1.3-5'}}</span>
+                                        </span>
+                                        <ng-template #loading>
+                                            <span><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span>
+                                        </ng-template>
+                                    </td>
+                                    <td class="text-center ticker">
+                                        <span class="" *ngIf="ticker_lastAsk; else loading">{{ticker_lastAsk | number: '1.3-5'}}ETH
+                                            <br><span class="ticker_usd">${{ethUsdPrice * (ticker_lastAsk | number: '1.3-5') | number: '1.3-5'}}</span>
+                                        </span>
+                                        <ng-template #loading>
+                                            <span><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span>
+                                        </ng-template>
+                                    </td>
+                                    <td class="text-center ticker">
+                                        <span class="" *ngIf="market24hHigh; else loading" [ngClass]="{'up':'active-up','down':'active-down'}[is24hHighUp]">{{market24hHigh | number: '1.2-3'}}ETH
+                                            <br><span class="ticker_usd">${{ethUsdPrice * (market24hHigh | number: '1.3-5') | number: '1.3-5'}}</span>
+                                        </span>
+                                        <ng-template #loading>
+                                            <span><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span>
+                                        </ng-template>
+                                    </td>
+                                    <td class="text-center ticker">
+                                        <span class="" *ngIf="market24hLow; else loading" [ngClass]="{'up':'active-up','down':'active-down'}[is24hLowUp]">{{market24hLow | number: '1.2-3'}}ETH
+                                            <br><span class="ticker_usd">${{ethUsdPrice * (market24hLow | number: '1.3-5') | number: '1.3-5'}}</span>
+                                        </span>
+                                        <ng-template #loading>
+                                            <span><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span>
+                                        </ng-template>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>  
+        <div class="row">
+          <div class="main-col col-12 col-md-12 col-xl-12">
+            <div class="form-group" class="order_ticker_title" style="border:2px solid #9a9494; border-bottom: none;">
+                <label for="formGroupExampleInput">PRICE CHART</label>
+            </div>
+            <div class="component_exchange" style="border-top:none">
+                <div id="chart_container" style=" margin-left:5px;width:100%; height:406px;">
+                </div>
+            </div>
+          </div>
+        </div>
+          <div class="row">
+              <div class="col-md-6 col-12 col-lg-6 col-xl-6">
+                <div class="component_exchange" id="order_form">
+                    <div class="view_mode text-center" *ngIf="!coinbase || netWorkID !==42">
+                        <div>
+                            <p>You are in view mode.<br> Please Unlock your account for trading here</p>
+                        </div>
+                    </div>
+                    <div class="form-group" class="order_ticker_title">
+                        <label>BUY - <span>(ETH/{{quoteToken}})</span></label>
+                        <span style="float: right; cursor: pointer;"><a (click)="cleanOrdertiker('BUY')"><i class="fa fa-refresh" aria-hidden="true"></i></a></span>
+                    </div>
+                    <div class="row">
+                      <div class="col-4 col-md-4 col-lg-4 col-xl-4 text-right label-amount">
+                          AMOUNT:
+                      </div>
+                      <div class="col-8 col-md-8 col-lg-8 col-xl-8">
+                        <mat-form-field class="col-md-12 col-12">
+                          <input type="hidden" [formControl]="actionBUY" value="">
+                          <input type="hidden" [formControl]="ordersaltBUY" value="">
+                          <input type="number" matInput placeholder="{{quoteToken}} Amount" [formControl]="AmountBUY" value="" required>
+                          <mat-error *ngIf="AmountBUY.invalid">{{getErrorMessage('amountBUY')}}</mat-error>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-4 col-md-4 col-lg-4 col-xl-4 text-right label-amount">
+                          <a class="" *ngIf="actionBUY.value !== 'filled'" (click)="calculateBestRate('BUY')" style="text-decoration: underline; cursor: pointer;">ETH:</a>
+                          <span *ngIf="actionBUY.value === 'filled'">ETH:</span>
+                      </div>
+                      <div class="col-8 col-md-8 col-lg-8 col-xl-8">
+                        <mat-form-field class="col-md-12 col-12">
+                            <input type="number" matInput placeholder="Price" [formControl]="PriceBUY" value="" required [attr.disabled]="actionBUY.value === 'filled' ? '' : null">
+                            <mat-error *ngIf="PriceBUY.invalid">{{getErrorMessage('priceBUY')}}</mat-error>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 col-md-4 col-lg-4 col-xl-4 text-right label-amount">
+                            Expiration:
+                        </div>
+                        <div class="col-8 col-md-8 col-lg-8 col-xl-8">
+                            <mat-form-field class="col-md-12 col-12">
+                                <input matInput [matDatepicker]="picker1" placeholder="Expiration Date" [min]="minDate" [formControl]="ExpireDateBUY" value="" required [attr.disabled]="actionBUY.value === 'filled' ? '' : null">
+                                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                <mat-datepicker touchUi="true" #picker1 disabled="false"></mat-datepicker>
+                                <mat-error *ngIf="ExpireDateBUY.invalid">{{getErrorMessage('dateBUY')}}</mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <!-- <div class="row">
+                        <div class="col-4 col-md-4 col-lg-4 col-xl-4 text-right form-group">
+                            Fee:
+                        </div>
+                        <div class="col-6 col-md-6 col-lg-6 col-xl-6 text-left">
+                            <span style="padding-left: 10px;">{{AmountBUY.value * fee / 100 | number: '1.5'}} {{quoteToken}}</span>
+                        </div>
+                        <div class="col-2 col-md-2 col-lg-2 col-xl-2 text-left">
+                            <span>{{fee}}%</span>
+                        </div>
+                    </div> -->
+                    <div class="row">
+                        <div class="col-4 col-md-4 col-lg-4 col-xl-4 text-right form-group label-amount" style="padding-top:0px !important">
+                            Total WETH:
+                        </div>
+                        <div class="col-8 col-md-8 col-lg-8 col-xl-8 text-left">
+                            <span style="padding-left: 10px;" id="buy_totalweth">{{AmountBUY.value * PriceBUY.value | number: '1.5'}} </span><span>WETH</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-md-12 col-lg-12 col-xl-12 text-center err_status">
+                            <p *ngIf="isErr">{{errMsgBUY}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2 col-md-2 col-lg-2 col-xl-2 text-center"></div>
+                        <div class="col-8 col-md-8 col-lg-8 col-xl-8 text-center">
+                            <div class="form-group text-center">
+                                <button type="button" class="btn btn-block butn-evoai" (click)="createOrder('buy')" [disabled]="(AmountBUY.invalid || PriceBUY.invalid) || ExpireDateBUY.invalid">
+                                    <!-- <span *ngIf="actionBUY.value === 'filled'">Fill BUY Order</span> -->
+                                    <span *ngIf="actionBUY.value === 'filled'">Fill SELL Order</span>
+                                    <span *ngIf="actionBUY.value !== 'filled'">Place BUY Order </span>
+                                <span *ngIf="isCreatingBuyOrder"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span></button>
+                              </div>
+                        </div>
+                        <div class="col-2 col-md-2 col-lg-2 col-xl-2 text-center"></div>
+                    </div>
+                    <!-- end of row -->
+                </div>
+            </div>
+            <div class="col-md-6 col-12 col-lg-6 col-xl-6">
+                <div class="component_exchange" id="order_form">
+                    <div class="view_mode text-center" *ngIf="!coinbase || netWorkID !==42">
+                        <div>
+                            <p>You are in view mode.<br> Please Unlock your account for trading here</p>
+                        </div>
+                    </div>
+                    <div class="form-group" class="order_ticker_title">
+                        <label>SELL - <span>(ETH/{{quoteToken}})</span></label>
+                        <span style="float:right; cursor: pointer;"><a (click)="cleanOrdertiker('SELL')"><i class="fa fa-refresh" aria-hidden="true"></i></a></span>
+                    </div>
+                                        <!-- <div class="row">
+                        <div class="col-4 col-md-4 col-lg-4 col-xl-4 text-right label-amount">
+                          TYPE
+                        </div>
+                      <div class="col-8 col-md-8 col-lg-8 col-xl-8">
+                        <mat-select color="accent" [(value)]="selected_buy" class="col-md-12 col-12" (change)="_onChangeMarket($event, 'BUY')">
+                          <mat-option value="LIMIT">LIMIT ORDER</mat-option>
+                          <mat-option value="MARKET">MARKET ORDER</mat-option>
+                        </mat-select>
+                      </div>
+                    </div> -->
+                    <div class="row">
+                      <div class="col-4 col-md-4 col-lg-4 col-xl-4 text-right label-amount">
+                          AMOUNT:
+                      </div>
+                      <div class="col-8 col-md-8 col-lg-8 col-xl-8">
+                        <mat-form-field class="col-md-12 col-12">
+                          <input type="hidden" [formControl]="actionSELL" value="">
+                          <input type="hidden" [formControl]="ordersaltSELL" value="">
+                          <input type="number" matInput placeholder="{{quoteToken}} Amount" [formControl]="AmountSELL" value="" required>
+                          <mat-error *ngIf="AmountSELL.invalid">{{getErrorMessage('amountSELL')}}</mat-error>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="row">
+                        <!-- <div class="orderTip">
+                            <a class="" (click)="calculateBestRate(checked)"><span class="badge badge-info"><i class="fa fa-question-circle"></i></span> Find Best Order</a>
+                        </div> -->
+                      <div class="col-4 col-md-4 col-lg-4 col-xl-4 text-right label-amount">
+                          <a class="" *ngIf="actionSELL.value !== 'filled'" (click)="calculateBestRate('SELL')" style="text-decoration: underline; cursor: pointer;">ETH:</a>
+                          <span *ngIf="actionSELL.value === 'filled'">ETH:</span>
+                      </div>
+                      <div class="col-8 col-md-8 col-lg-8 col-xl-8">
+                        <mat-form-field class="col-md-12 col-12">
+                            <input type="number" matInput placeholder="Price" [formControl]="PriceSELL" value="" required [attr.disabled]="actionSELL.value === 'filled' ? '' : null">
+                            <mat-error *ngIf="PriceSELL.invalid">{{getErrorMessage('priceSELL')}}</mat-error>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 col-md-4 col-lg-4 col-xl-4 text-right label-amount">
+                            Expiration:
+                        </div>
+                        <div class="col-8 col-md-8 col-lg-8 col-xl-8">
+                            <mat-form-field class="col-md-12 col-12">
+                                <input matInput [matDatepicker]="picker2" placeholder="Expiration Date" [min]="minDate" [formControl]="ExpireDateSELL" value="" required [attr.disabled]="actionSELL.value === 'filled' ? '' : null">
+                                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                <mat-datepicker touchUi="true" #picker2 disabled="false"></mat-datepicker>
+                                <mat-error *ngIf="ExpireDateSELL.invalid">{{getErrorMessage('dateSELL')}}</mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <!-- <div class="row">
+                        <div class="col-4 col-md-4 col-lg-4 col-xl-4 text-right form-group">
+                            Fee:
+                        </div>
+                        <div class="col-6 col-md-6 col-lg-6 col-xl-6 text-left">
+                            <span style="padding-left: 10px;">{{AmountSELL.value * fee / 100 | number: '1.5'}} {{quoteToken}}</span>
+                        </div>
+                        <div class="col-2 col-md-2 col-lg-2 col-xl-2 text-left">
+                            <span>{{fee}}%</span>
+                        </div>
+                    </div> -->
+                    <div class="row">
+                        <div class="col-4 col-md-4 col-lg-4 col-xl-4 text-right form-group label-amount" style="padding-top:0px !important">
+                            Total WETH:
+                        </div>
+                        <div class="col-8 col-md-8 col-lg-8 col-xl-8 text-left">
+                            <span style="padding-left: 10px;" id="sell_totalweth">{{AmountSELL.value * PriceSELL.value | number: '1.5'}}</span><span> WETH</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-md-12 col-lg-12 col-xl-12 text-center err_status">
+                            <p *ngIf="isErr">{{errMsgSELL}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2 col-md-2 col-lg-2 col-xl-2 text-center"></div>
+                        <div class="col-8 col-md-8 col-lg-8 col-xl-8 text-center">
+                            <div class="form-group text-center">
+                                <button type="button" class="btn btn-block butn-evoai" (click)="createOrder('sell')" [disabled]="(AmountSELL.invalid || PriceSELL.invalid) || ExpireDateSELL.invalid">
+                                    <!-- <span *ngIf="actionSELL.value === 'filled'">Fill SELL Order</span> -->
+                                    <span *ngIf="actionSELL.value === 'filled'">Fill BUY Order</span>
+                                    <span *ngIf="actionSELL.value !== 'filled'">Place SELL Order </span>
+                                <span *ngIf="isCreatingSellOrder"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span></button>
+                              </div>
+                        </div>
+                        <div class="col-2 col-md-2 col-lg-2 col-xl-2 text-center"></div>
+                    </div>
+                </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="main-col col-12 col-md-6 col-xl-6">
+                <div class="component_exchange">
+                    <div class="form-group" class="order_ticker_title">
+                        <label for="formGroupExampleInput">ASKS <span *ngIf="isGettingOrderbook"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span></label>
+                        <span *ngIf="!isGettingOrderbook" class="float-right">Total: {{total_asks}} EVOT</span>
+                    </div>
+                    <div class="table-responsive scrollbar_orderbook" id="style-3" style="overflow: auto !important;height: 200px !important;">
+                      <table class="table" class="my_orderhistory_tbl">
+                        <thead>
+                            <tr>
+                                <th width="25%" class="text-right">PRICE</th>
+                                <th width="25%" class="text-right">{{quoteToken}}</th>
+                                <th width="25%" class="text-right">ETH</th>
+                                <th width="25%" class="text-right">USD</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          <tr class="order_items" *ngFor="let order of orderAsks" (click)="sel_order('asks', order)" matTooltip="Expiration Date:{{order.expirationUnixTimestampSec*1000 | date}}">
+                            <td class="order_ask text-right" style="width: 25%">{{order.remainedTakerTokenAmount/order.remainedMakerTokenAmount | number: '1.5'}}</td>
+                            <td class="order_ask text-right" style="width: 25%">{{(order.remainedMakerTokenAmount | toAmount) | number: '1.2'}}</td>
+                            <td class="order_ask text-right" style="width: 25%">{{(order.remainedTakerTokenAmount | toAmount) | number: '1.3'}}</td>
+                            <td class="order_ask text-right" style="width: 25%">
+                              <ng-template *ngIf="ethUsdPrice; then price else zero"></ng-template>
+                              <ng-template #price><span>{{(order.remainedTakerTokenAmount * (ethUsdPrice | toNumber) )/1000000000000000000 | number: '1.2'}}</span></ng-template>
+                              <ng-template #zero><span>0</span></ng-template>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
+            </div>
+            <div class="main-col col-12 col-md-6 col-xl-6">
+              <div class="component_exchange">
+                <div class="form-group" class="order_ticker_title">
+                    <label for="formGroupExampleInput">BIDS <span *ngIf="isGettingOrderbook"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span></label>
+                    <span *ngIf="!isGettingOrderbook" class="float-right">Total: {{ total_bids }} ETH</span>
+                </div>
+                <div class="table-responsive scrollbar_orderbook" id="style-3"  style="overflow: auto !important;height: 200px !important;">
+                    <table class="table table-striped table-hover table-sm" class="my_orderhistory_tbl">
+                        <thead>
+                            <tr>
+                                <th width="25%" class="text-right">PRICE</th>
+                                <th width="25%" class="text-right">{{quoteToken}}</th>
+                                <th width="25%" class="text-right">ETH</th>
+                                <th width="25%" class="text-right">USD</th>
+                            </tr>
+                        </thead>
+                      <tbody>
+                        <tr class="order_items" *ngFor="let order of orderBids" (click)="sel_order('bids', order)" title="Expiration Date:{{order.expirationUnixTimestampSec*1000 | date}}">
+                            <td class="order_bid text-right" style="width: 25%">{{order.remainedMakerTokenAmount/order.remainedTakerTokenAmount | number: '1.5'}}</td>
+                          <td class="order_bid text-right" style="width: 25%">{{(order.remainedTakerTokenAmount | toAmount) | number: '1.2'}}</td>
+                          <td class="order_bid text-right" style="width: 25%">{{(order.remainedMakerTokenAmount | toAmount) | number: '1.3'}}</td>
+                          <td class="order_bid text-right" style="width: 25%">
+                              <ng-template *ngIf="ethUsdPrice; then price else zero"></ng-template>
+                              <ng-template #price><span>{{(order.remainedMakerTokenAmount * (ethUsdPrice | toNumber) )/1000000000000000000 | number: '1.2'}}</span></ng-template>
+                              <ng-template #zero><span>0</span></ng-template>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- <div class="">
+                    <div class="container" id="spread_pannel">
+                      <div class="row">
+                          <div class="col-6 col-md-6 text-right">Spead:</div>
+                          <div class="col-6 col-md-6 text-right">{{spread | number:'1.3-5'}}</div>
+                      </div>
+                    </div>
+                  </div> -->
+              </div>
+            </div>
+          </div>
+          <div class="row">
+              <div class="main-col col-12 col-md-12 col-xl-12">
+                  <div class="component_exchange">
+                      <mat-tab-group>
+                          <mat-tab label="MY OPEN ORDERS">
+                              <div class="table-responsive scrollbar" id="style-3" style="overflow: auto !important;height: 310px !important;">
+                                  <table class="table table-striped table-hover table-sm my_order_tbl">
+                                      <thead>
+                                          <tr>
+                                              <th style="width:20% !important;">Amount</th>
+                                              <th style="width:20% !important;">Price(ETH)</th>
+                                              <th style="width:20% !important;">USD Price</th>
+                                              <th style="width:30% !important;">Created</th>
+                                              <th style="width:10% !important;">Actions</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                          <tr class="order_items" *ngFor="let order of myActiveOrders">
+                                              <ng-template *ngIf="ordertype(order.type); then orderbids else orderasks"></ng-template>
+                                              <ng-template #orderbids>
+                                                  <td class="order_ask">{{order.remainedTakerTokenAmount | toAmount}}</td>
+                                                  <td class="order_ask">{{order.remainedMakerTokenAmount/order.remainedTakerTokenAmount | number: '1.5'}}</td>
+                                                  <td class="order_ask">
+                                                      <ng-template *ngIf="ethUsdPrice; then price else zero"></ng-template>
+                                                      <ng-template #price><span>{{(order.remainedTakerTokenAmount * order.remainedMakerTokenAmount/order.remainedTakerTokenAmount * (ethUsdPrice | toNumber) )/1000000000000000000 | number: '1.3-4'}}</span></ng-template>
+                                                      <ng-template #zero><span>0</span></ng-template>
+                                                  </td>
+                                                  <td class="order_ask">{{order.created_on * 1000 | date}}</td>
+                                                  <td class="order_ask">
+                                                      <div class="badge block badge-danger bordered"><a (click)="closeOrder(order)" style="color:white;">Cancel</a></div>
+                                                  </td>
+                                              </ng-template>
+                                              <ng-template #orderasks>
+                                                  <td class="order_bid">{{order.remainedMakerTokenAmount | toAmount}}</td>
+                                                  <td class="order_bid">{{order.remainedTakerTokenAmount/order.remainedMakerTokenAmount | number: '1.5'}}</td>
+                                                  <td class="order_bid">
+                                                      <ng-template *ngIf="ethUsdPrice; then price else zero"></ng-template>
+                                                      <ng-template #price><span>{{(order.remainedMakerTokenAmount * order.remainedTakerTokenAmount/order.remainedMakerTokenAmount * (ethUsdPrice | toNumber) )/1000000000000000000 | number: '1.3-4'}}</span></ng-template>
+                                                      <ng-template #zero><span>0</span></ng-template>
+                                                  </td>
+                                                  <td class="order_bid">{{order.created_on * 1000 | date}}</td>
+                                                  <td class="order_bid">
+                                                      <div class="badge block badge-danger bordered"><a (click)="closeOrder(order)" style="color:white;">Cancel</a></div>
+                                                  </td>
+                                              </ng-template>
+                                          </tr>
+                                      </tbody>
+                                  </table>
+                              </div>
+                          </mat-tab>
+                          <mat-tab label="MY TRADE HISTORY">
+                              <div class="table-responsive scrollbar" id="style-3" style="overflow: auto !important;height: 310px !important;">
+                                  <table class="table" class="my_orderhistory_tbl">
+                                      <thead>
+                                          <tr>
+                                              <th style="width:15% !important;">Amount</th>
+                                              <th style="width:15% !important;">Price</th>
+                                              <th style="width:30% !important;">created</th>
+                                              <th style="width:30% !important;">CloseAt</th>
+                                              <th style="width:10% !important;">status</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                          <tr class="order_items" *ngFor="let order of myHistoryOrders">
+                                              <ng-template *ngIf="ordertype(order.type); then orderhisbids else orderhisasks"></ng-template>
+                                              <ng-template #orderhisbids>
+                                                  <td class="order_bid">{{order.remainedTakerTokenAmount | toAmount}}</td>
+                                                  <td class="order_bid">{{order.remainedMakerTokenAmount/order.remainedTakerTokenAmount | number: '1.5'}}</td>
+                                                  <td class="order_bid">{{order.created_on * 1000 | date}}</td>
+                                                  <td class="order_bid">{{order.closeAt * 1000 | date}}</td>
+                                                  <td class="order_bid">
+                                                      <ng-template *ngIf="statetype(order.state); then orderfilled else orderfailed"></ng-template>
+                                                      <ng-template #orderfilled>
+                                                          <div class="badge block badge-success bordered"><a href="{{etherscan_url}}/{{order.orderHash}}" target="_black" style="color:white;">{{order.state}}</a></div>
+                                                      </ng-template>
+                                                      <ng-template #orderfailed>
+                                                          <div class="badge block badge-danger bordered"><a href="{{etherscan_url}}/{{order.orderHash}}" target="_black" style="color:white;">{{order.state}}</a></div>
+                                                      </ng-template>
+                                                  </td>
+                                              </ng-template>
+                                              <ng-template #orderhisasks>
+                                                  <td class="order_ask">{{order.remainedMakerTokenAmount | toAmount}}</td>
+                                                  <td class="order_ask">{{order.remainedTakerTokenAmount/order.remainedMakerTokenAmount | number: '1.5'}}</td>
+                                                  <td class="order_ask">{{order.created_on * 1000 | date}}</td>
+                                                  <td class="order_ask">{{order.closeAt * 1000 | date}}</td>
+                                                  <td class="order_ask">
+                                                      <ng-template *ngIf="statetype(order.state); then orderfilled else orderfailed"></ng-template>
+                                                      <ng-template #orderfilled>
+                                                          <div class="badge block badge-success bordered"><a href="{{etherscan_url}}/{{order.orderHash}}" target="_black" style="color:white;">{{order.state}}</a></div>
+                                                      </ng-template>
+                                                      <ng-template #orderfailed>
+                                                          <div class="badge block badge-danger bordered"><a href="{{etherscan_url}}/{{order.orderHash}}" target="_black" style="color:white;">{{order.state}}</a></div>
+                                                      </ng-template>
+                                                  </td>
+                                              </ng-template>
+                                          </tr>
+                                      </tbody>
+                                  </table>
+                              </div>
+                          </mat-tab>
+                      </mat-tab-group>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+</div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-white" id="exampleModalLongTitle">SMARTDEX- SUBMIT TOKEN</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="component_exchange">
+                <div class="row">
+                    <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+                        <div class="alert alert-info">
+                          <div class="text-center">
+                              <strong><i class="fa fa-exclamation-circle"></i> *IMPORTANT!</strong>
+                          </div>
+                          <div class="text-center">
+                              Please submit new token requests here (Ethereum based only). Duplicate requests from the same user will be deleted. We will consider all requests on a first come, first served basis. Thank you
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                      <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+                        <div class="new_token_control">
+                          <mat-form-field class="col-12 col-xl-12">
+                              <input type="text" matInput placeholder="Email Address" [formControl]="token_email" value="" required>
+                              <mat-error *ngIf="token_email">Email address is required</mat-error>
+                          </mat-form-field>
+                          <mat-form-field class="col-12 col-xl-12">
+                              <input type="text" matInput placeholder="Token Name" [formControl]="new_token_name" value="" required>
+                              <mat-error *ngIf="new_token_name.invalid">Token Name is required</mat-error>
+                          </mat-form-field>
+                          <mat-form-field class="col-12 col-xl-12">
+                              <input type="text" matInput placeholder="Token Symbol" [formControl]="new_token_symbol" value="" required>
+                              <mat-error *ngIf="new_token_symbol.invalid">Token Symbol is required</mat-error>
+                          </mat-form-field>
+                          <mat-form-field class="col-12 col-xl-12">
+                              <input type="text" matInput placeholder="Token Address" [formControl]="new_token_address"  maxlength="42" value="" required>
+                              <mat-error *ngIf="new_token_address.invalid">Token address is required</mat-error>
+                          </mat-form-field>
+                          <mat-form-field class="col-12 col-xl-12">
+                              <input type="number" matInput placeholder="Precision (decimals)" [formControl]="new_token_decimal" value="" required>
+                              <mat-error *ngIf="new_token_decimal.invalid">Token Precision is required</mat-error>
+                          </mat-form-field>
+                          <mat-form-field class="col-12 col-xl-12">
+                              <input type="text" matInput placeholder="Website of the Token" [formControl]="new_token_website" value="" required>
+                              <mat-error *ngIf="new_token_website.invalid">Website of the Token is required</mat-error>
+                          </mat-form-field>
+                          <mat-form-field class="col-12 col-xl-12">
+                              <input type="text" matInput placeholder="Link to the website where token address can be verified" [formControl]="token_verify_url" value="" required>
+                              <mat-error *ngIf="token_verify_url.invalid">Link for the Token is required</mat-error>
+                          </mat-form-field>
+                          <mat-form-field class="col-12 col-xl-12">
+                              <input type="text" matInput placeholder="Announcement forum thread link" [formControl]="token_announce_url" value="" required>
+                              <mat-error *ngIf="token_announce_url.invalid">Announcement forum thread link is required</mat-error>
+                          </mat-form-field>
+                          <div class="err_status">
+                              <p *ngIf="isErrRegisterNewToken">{{errMsg}}</p>
+                          </div>
+                          </div>
+                      </div>
+                  </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-12 col-xl-12 text-center">
+          <div class="form-group" id="token_reg_btn">
+              <button mat-raised-button (click)="register_new_token()" color="accent">REGISTER NEW TOKEN <span *ngIf="isRegisteringToken"><i class="fa fa-spinner fa-spin" style="font-size:15px"></i></span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

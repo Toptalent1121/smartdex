@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>{{data.token}} Token Send Transaction</h1>
+<div class="row">
+    <div class="main-col col-12 col-xl-12">
+        <div>
+            <mat-form-field class="main-col col-12 col-xl-12">
+                <input matInput placeholder="address" [formControl]="address" maxlength="42" [(ngModel)]="data.address">
+                <mat-error *ngIf="address.invalid">Please input valid address</mat-error>
+                <mat-hint align="end">address to send</mat-hint>
+            </mat-form-field>
+            <mat-form-field class="main-col col-12 col-xl-12">
+                <input type="number" placeholder="amount" matInput [formControl]="amount" [(ngModel)]="data.amount">
+                <mat-error *ngIf="amount.invalid">Please input valid amount</mat-error>
+                <mat-hint align="end">amount to send</mat-hint>
+            </mat-form-field>
+        </div>
+        <div mat-dialog-actions class="text-right">
+            <button mat-button (click)="onNoClick()">No Thanks</button>
+            <button mat-button [mat-dialog-close]="[data.address,data.amount]" cdkFocusInitial [disabled]="(address.invalid || amount.invalid)">Send</button>
+        </div>
+    </div>
+</div>

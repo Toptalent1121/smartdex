@@ -1,0 +1,134 @@
+@font-face {
+    font-family: "h1-box-font";
+    src: url("../../assets/font/DINPro-Black.otf");
+}
+
+.bg-custom {
+    background-color: rgba(156, 147, 191, 0.1);
+    /* border-bottom: 1px solid #255398; */
+    margin-bottom: 15px;
+}
+
+.nav_item {
+    font-size: 18px;
+    font-weight: 500;
+    color: #ffffffd4 !important;
+    padding: 5px 20px 5px 20px !important;
+}
+
+.btn-xl {
+    text-transform: uppercase;
+    padding: 1.5rem 3rem;
+    font-size: .9rem;
+    font-weight: 700;
+    letter-spacing: .1rem
+}
+
+.bg-black {}
+
+.landing_block {
+    min-height: 400px;
+    background-color: #000a22;
+}
+
+.landing_block_img {
+    width: 100%;
+}
+
+.rounded-pill {
+    border-radius: 5rem
+}
+
+header.masthead {
+    font-family: 'h1-box-font';
+    position: relative;
+    text-shadow: 1px 1px 1px #000;
+    font-weight: 900;
+    letter-spacing: -2px;
+    overflow: hidden;
+    padding-top: calc(7rem + 72px);
+    padding-bottom: 7rem;
+    background: url("../../assets/img/blockchain.png") no-repeat bottom;
+    background-size: 100% auto;
+    background-position: center center;
+    background-attachment: scroll;
+    background-size: cover
+}
+
+header.masthead .masthead-content {
+    z-index: 1;
+    position: relative
+}
+
+header.masthead .masthead-content .masthead-heading {
+    font-size: 5rem
+}
+
+header.masthead .masthead-content .masthead-subheading {
+    font-size: 5rem
+}
+
+@media (min-width:992px) {
+    header.masthead {
+        padding-top: calc(10rem + 55px);
+        padding-bottom: 10rem
+    }
+    header.masthead .masthead-content .masthead-heading {
+        font-size: 5rem
+    }
+    header.masthead .masthead-content .masthead-subheading {
+        font-size: 5rem
+    }
+}
+
+@media (max-width:576px) {
+    header.masthead {
+        padding-top: calc(10rem + 55px);
+        padding-bottom: 6rem
+    }
+    header.masthead .masthead-content .masthead-heading {
+        font-size: 4rem
+    }
+    header.masthead .masthead-content .masthead-subheading {
+        font-size: 4rem
+    }
+}
+
+@media (max-width:768px) {
+    header.masthead {
+        padding-top: calc(10rem + 55px);
+        padding-bottom: 7rem
+    }
+    header.masthead .masthead-content .masthead-heading {
+        font-size: 4rem
+    }
+    header.masthead .masthead-content .masthead-subheading {
+        font-size: 4rem
+    }
+}
+
+@media (max-width:320px) {
+    header.masthead {
+        padding-top: calc(10rem + 55px);
+        padding-bottom: 5rem
+    }
+    header.masthead .masthead-content .masthead-heading {
+        font-size: 3rem
+    }
+    header.masthead .masthead-content .masthead-subheading {
+        font-size: 3rem
+    }
+}
+
+@media (max-width:200px) {
+    header.masthead {
+        padding-top: calc(10rem + 55px);
+        padding-bottom: 4rem
+    }
+    header.masthead .masthead-content .masthead-heading {
+        font-size: 2rem
+    }
+    header.masthead .masthead-content .masthead-subheading {
+        font-size: 2rem
+    }
+}
